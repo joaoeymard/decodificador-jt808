@@ -6,7 +6,6 @@ const notesEl = document.getElementById("notes");
 const escapedHexEl = document.getElementById("escapedHex");
 const unescapedHexEl = document.getElementById("unescapedHex");
 const loadSampleBtn = document.getElementById("loadSample");
-const saveHistoryBtn = document.getElementById("saveHistory");
 const clearInputBtn = document.getElementById("clearInput");
 const clearHistoryBtn = document.getElementById("clearHistory");
 const historyListEl = document.getElementById("historyList");
@@ -1033,6 +1032,19 @@ function render() {
   renderSummary(parsed);
   renderNotes(allErrors, allWarnings);
   setupHoverInteractions();
+
+  if (!allErrors.length) {
+    const sanitized = sanitizeHex(raw).toUpperCase();
+    if (isValidHexString(sanitized)) {
+      historyItems = historyItems.filter((item) => item.hex !== sanitized);
+      historyItems.unshift({ hex: sanitized, ts: Date.now() });
+      if (historyItems.length > HISTORY_LIMIT) {
+        historyItems = historyItems.slice(0, HISTORY_LIMIT);
+      }
+      saveHistory(historyItems);
+      renderHistory(historyItems);
+    }
+  }
 }
 
 let historyItems = loadHistory();
@@ -1047,21 +1059,6 @@ clearInputBtn.addEventListener("click", () => {
   input.value = "";
   render();
 });
-if (saveHistoryBtn) {
-  saveHistoryBtn.addEventListener("click", () => {
-    const sanitized = sanitizeHex(input.value).toUpperCase();
-    if (!isValidHexString(sanitized)) {
-      return;
-    }
-    historyItems = historyItems.filter((item) => item.hex !== sanitized);
-    historyItems.unshift({ hex: sanitized, ts: Date.now() });
-    if (historyItems.length > HISTORY_LIMIT) {
-      historyItems = historyItems.slice(0, HISTORY_LIMIT);
-    }
-    saveHistory(historyItems);
-    renderHistory(historyItems);
-  });
-}
 if (clearHistoryBtn) {
   clearHistoryBtn.addEventListener("click", () => {
     historyItems = [];
