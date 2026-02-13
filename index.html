@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>JT808 V Series - Inspetor de Mensagens</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">JT808 V Series</p>
+          <h1>Inspetor de Mensagens</h1>
+          <p class="lead">
+            Cole uma mensagem hexadecimal completa (com flags <code>7E</code>) e veja cada parte
+            discriminada conforme o protocolo.
+          </p>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Formato</span>
+            <span class="stat-value">Flag + Header + Body + Checksum + Flag</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Endian</span>
+            <span class="stat-value">Big-endian (WORD/DWORD)</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Nova mensagem</h2>
+              <div class="actions">
+                <button id="loadSample" type="button">Carregar exemplo</button>
+                <button id="saveHistory" type="button">Salvar no historico</button>
+                <button id="clearInput" type="button" class="ghost">Limpar</button>
+              </div>
+            </div>
+            <textarea
+              id="hexInput"
+              spellcheck="false"
+              placeholder="Ex: 7E000200003440500493730104C77E"
+              rows="6"
+            ></textarea>
+            <div class="helper">
+              Aceita espaços, quebras de linha e prefixos <code>0x</code>. O parser remove tudo que não for hex.
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Historico</h2>
+              <div class="actions">
+                <button id="clearHistory" type="button" class="ghost">Limpar historico</button>
+              </div>
+            </div>
+            <div class="helper">Clique em uma mensagem para carregar.</div>
+            <ul id="historyList" class="history-list"></ul>
+          </section>
+        </aside>
+
+        <main class="content">
+          <section class="panel" id="resultPanel">
+            <div class="panel-header">
+              <h2>Resultado</h2>
+              <div id="status" class="status">Aguardando entrada...</div>
+            </div>
+
+            <div class="split">
+              <div class="box">
+                <h3>Resumo</h3>
+                <div id="summary" class="summary">Nenhuma mensagem analisada.</div>
+              </div>
+              <div class="box">
+                <h3>Payload</h3>
+                <div class="payload">
+                  <div>
+                    <span class="label">Escapado (sem flags)</span>
+                    <pre id="escapedHex">-</pre>
+                  </div>
+                  <div>
+                    <span class="label">Desescapado (header + body + checksum)</span>
+                    <pre id="unescapedHex" class="hex-bytes">-</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Parte</th>
+                  <th>Hex</th>
+                  <th>Significado</th>
+                </tr>
+              </thead>
+              <tbody id="partsTable"></tbody>
+            </table>
+
+            <div id="notes" class="notes"></div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="footer">
+        Baseado na estrutura descrita em <code>docs/AOVX_V_Series_Protocol_V3.0.txt</code>.
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
